@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournament Live Scorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen pb-12 font-sans">
+
+    <!-- Header -->
+    <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-50 shadow-md">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold text-amber-400 flex items-center gap-2">
+                <i class="fa-solid fa-trophy"></i> Tournament Live Scorer
+            </h1>
+            <button onclick="resetCurrentSport()" class="text-xs bg-red-600/30 hover:bg-red-600 text-red-300 hover:text-white px-3 py-1.5 rounded border border-red-500/50 transition">
+                <i class="fa-solid fa-rotate-right"></i> Reset Match
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto p-4 space-y-6">
+
+        <!-- Navigation Tabs -->
+        <nav class="grid grid-cols-4 gap-2 bg-slate-800 p-1.5 rounded-xl border border-slate-700">
+            <button onclick="switchSport('cricket')" id="tab-cricket" class="tab-btn py-2.5 rounded-lg text-sm font-semibold flex flex-col md:flex-row items-center justify-center gap-2 transition bg-amber-500 text-slate-950">
+                <i class="fa-solid fa-baseball-bat-ball"></i> Cricket
+            </button>
+            <button onclick="switchSport('badminton')" id="tab-badminton" class="tab-btn py-2.5 rounded-lg text-sm font-semibold flex flex-col md:flex-row items-center justify-center gap-2 transition text-slate-400 hover:text-white">
+                <i class="fa-solid fa-feather-pointed"></i> Badminton
+            </button>
+            <button onclick="switchSport('carrom')" id="tab-carrom" class="tab-btn py-2.5 rounded-lg text-sm font-semibold flex flex-col md:flex-row items-center justify-center gap-2 transition text-slate-400 hover:text-white">
+                <i class="fa-solid fa-circle-dot"></i> Carrom
+            </button>
+            <button onclick="switchSport('chess')" id="tab-chess" class="tab-btn py-2.5 rounded-lg text-sm font-semibold flex flex-col md:flex-row items-center justify-center gap-2 transition text-slate-400 hover:text-white">
+                <i class="fa-solid fa-chess"></i> Chess
+            </button>
+        </nav>
+
+        <!-- CRICKET BOARD -->
+        <section id="sport-cricket" class="sport-panel space-y-4">
+            <div class="bg-slate-800 rounded-2xl p-6 border border-slate-700 shadow-lg text-center space-y-4">
+                <div class="flex justify-around items-center text-slate-400 text-sm font-medium">
+                    <input type="text" id="cricket-t1" value="Team A" onchange="saveState()" class="bg-transparent text-center text-white font-bold text-lg border-b border-slate-600 focus:border-amber-400 outline-none w-32">
+                    <span>VS</span>
+                    <input type="text" id="cricket-t2" value="Team B" onchange="saveState()" class="bg-transparent text-center text-white font-bold text-lg border-b border-slate-600 focus:border-amber-400 outline-none w-32">
+                </div>
+                <div class="text-6xl font-black text-amber-400 tracking-tight">
+                    <span id="cricket-runs">0</span> / <span id="cricket-wickets">0</span>
+                </div>
+                <div class="text-slate-400 text-sm font-medium">
+                    Overs: <span id="cricket-overs" class="text-white font-bold">0.0</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-4 gap-3">
+                <button onclick="addRun(0)" class="bg-slate-800 hover:bg-slate-700 p-4 rounded-xl text-xl font-bold border border-slate-700">0</button>
+                <button onclick="addRun(1)" class="bg-slate-800 hover:bg-slate-700 p-4 rounded-xl text-xl font-bold border border-slate-700">1</button>
+                <button onclick="addRun(2)" class="bg-slate-800 hover:bg-slate-700 p-4 rounded-xl text-xl font-bold border border-slate-700">2</button>
+                <button onclick="addRun(3)" class="bg-slate-800 hover:bg-slate-700 p-4 rounded-xl text-xl font-bold border border-slate-700">3</button>
+                <button onclick="addRun(4)" class="bg-blue-600/30 hover:bg-blue-600/50 text-blue-300 p-4 rounded-xl text-xl font-bold border border-blue-500/50">4</button>
+                <button onclick="addRun(6)" class="bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 p-4 rounded-xl text-xl font-bold border border-emerald-500/50">6</button>
+                <button onclick="addExtra('wd')" class="bg-amber-600/30 hover:bg-amber-600/50 text-amber-300 p-4 rounded-xl text-sm font-bold border border-amber-500/50">Wide</button>
+                <button onclick="addExtra('nb')" class="bg-amber-600/30 hover:bg-amber-600/50 text-amber-300 p-4 rounded-xl text-sm font-bold border border-amber-500/50">No Ball</button>
+                <button onclick="addWicket()" class="col-span-4 bg-red-600 hover:bg-red-500 text-white p-4 rounded-xl font-bold shadow-lg transition">OUT / WICKET</button>
+            </div>
+        </section>
+
+        <!-- BADMINTON BOARD -->
+        <section id="sport-badminton" class="sport-panel hidden space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 text-center space-y-3">
+                    <input type="text" id="badminton-p1" value="Player 1" onchange="saveState()" class="bg-transparent text-center font-bold text-lg border-b border-slate-600 text-white outline-none w-full">
+                    <div id="badminton-s1" class="text-6xl font-black text-amber-400">0</div>
+                    <div class="text-xs text-slate-400">Sets Won: <span id="badminton-sets1" class="text-white font-bold">0</span></div>
+                    <button onclick="badmintonPoint(1)" class="w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold">+ Point</button>
+                </div>
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 text-center space-y-3">
+                    <input type="text" id="badminton-p2" value="Player 2" onchange="saveState()" class="bg-transparent text-center font-bold text-lg border-b border-slate-600 text-white outline-none w-full">
+                    <div id="badminton-s2" class="text-6xl font-black text-amber-400">0</div>
+                    <div class="text-xs text-slate-400">Sets Won: <span id="badminton-sets2" class="text-white font-bold">0</span></div>
+                    <button onclick="badmintonPoint(2)" class="w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold">+ Point</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- CARROM BOARD -->
+        <section id="sport-carrom" class="sport-panel hidden space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 text-center space-y-3">
+                    <input type="text" id="carrom-p1" value="Player 1" onchange="saveState()" class="bg-transparent text-center font-bold text-lg border-b border-slate-600 text-white outline-none w-full">
+                    <div id="carrom-s1" class="text-6xl font-black text-amber-400">0</div>
+                    <div class="flex justify-center gap-2">
+                        <button onclick="carromAdd(1, 1)" class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded text-xs font-bold">+1 White</button>
+                        <button onclick="carromAdd(1, 3)" class="bg-red-600/40 hover:bg-red-600/60 text-red-200 px-3 py-1.5 rounded text-xs font-bold">+3 Queen</button>
+                    </div>
+                </div>
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 text-center space-y-3">
+                    <input type="text" id="carrom-p2" value="Player 2" onchange="saveState()" class="bg-transparent text-center font-bold text-lg border-b border-slate-600 text-white outline-none w-full">
+                    <div id="carrom-s2" class="text-6xl font-black text-amber-400">0</div>
+                    <div class="flex justify-center gap-2">
+                        <button onclick="carromAdd(2, 1)" class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded text-xs font-bold">+1 Black</button>
+                        <button onclick="carromAdd(2, 3)" class="bg-red-600/40 hover:bg-red-600/60 text-red-200 px-3 py-1.5 rounded text-xs font-bold">+3 Queen</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHESS BOARD -->
+        <section id="sport-chess" class="sport-panel hidden space-y-4">
+            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 space-y-6">
+                <div class="grid grid-cols-2 gap-4 text-center">
+                    <div class="p-4 bg-slate-900/50 rounded-xl border border-slate-700">
+                        <span class="text-xs text-slate-400 block mb-1">WHITE</span>
+                        <input type="text" id="chess-w" value="Player 1" onchange="saveState()" class="bg-transparent text-center font-bold text-white outline-none w-full border-b border-slate-700">
+                    </div>
+                    <div class="p-4 bg-slate-900/50 rounded-xl border border-slate-700">
+                        <span class="text-xs text-slate-400 block mb-1">BLACK</span>
+                        <input type="text" id="chess-b" value="Player 2" onchange="saveState()" class="bg-transparent text-center font-bold text-white outline-none w-full border-b border-slate-700">
+                    </div>
+                </div>
+                <div class="text-center space-y-2">
+                    <span class="text-xs text-slate-400">Match Status</span>
+                    <div id="chess-status" class="text-lg font-bold text-amber-400">In Progress...</div>
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                    <button onclick="chessResult('1-0')" class="bg-slate-700 hover:bg-slate-600 py-3 rounded-xl text-xs font-bold">1 - 0 (White Wins)</button>
+                    <button onclick="chessResult('½-½')" class="bg-slate-700 hover:bg-slate-600 py-3 rounded-xl text-xs font-bold">½ - ½ (Draw)</button>
+                    <button onclick="chessResult('0-1')" class="bg-slate-700 hover:bg-slate-600 py-3 rounded-xl text-xs font-bold">0 - 1 (Black Wins)</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        let currentSport = 'cricket';
+        let state = {
+            cricket: { runs: 0, wickets: 0, balls: 0 },
+            badminton: { s1: 0, s2: 0, sets1: 0, sets2: 0 },
+            carrom: { s1: 0, s2: 0 },
+            chess: { status: 'In Progress...' }
+        };
+
+        if (localStorage.getItem('tournament_state')) {
+            state = JSON.parse(localStorage.getItem('tournament_state'));
+            updateUI();
+        }
+
+        function switchSport(sport) {
+            currentSport = sport;
+            document.querySelectorAll('.sport-panel').forEach(p => p.classList.add('hidden'));
+            document.getElementById(`sport-${sport}`).classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('bg-amber-500', 'text-slate-950');
+                b.classList.add('text-slate-400');
+            });
+            const activeTab = document.getElementById(`tab-${sport}`);
+            activeTab.classList.add('bg-amber-500', 'text-slate-950');
+            activeTab.classList.remove('text-slate-400');
+        }
+
+        function saveState() {
+            localStorage.setItem('tournament_state', JSON.stringify(state));
+        }
+
+        function updateUI() {
+            document.getElementById('cricket-runs').innerText = state.cricket.runs;
+            document.getElementById('cricket-wickets').innerText = state.cricket.wickets;
+            const overs = Math.floor(state.cricket.balls / 6) + '.' + (state.cricket.balls % 6);
+            document.getElementById('cricket-overs').innerText = overs;
+
+            document.getElementById('badminton-s1').innerText = state.badminton.s1;
+            document.getElementById('badminton-s2').innerText = state.badminton.s2;
+            document.getElementById('badminton-sets1').innerText = state.badminton.sets1;
+            document.getElementById('badminton-sets2').innerText = state.badminton.sets2;
+
+            document.getElementById('carrom-s1').innerText = state.carrom.s1;
+            document.getElementById('carrom-s2').innerText = state.carrom.s2;
+
+            document.getElementById('chess-status').innerText = state.chess.status;
+
+            saveState();
+        }
+
+        function addRun(runs) {
+            state.cricket.runs += runs;
+            state.cricket.balls += 1;
+            updateUI();
+        }
+        function addExtra(type) {
+            state.cricket.runs += 1;
+            updateUI();
+        }
+        function addWicket() {
+            if (state.cricket.wickets < 10) {
+                state.cricket.wickets += 1;
+                state.cricket.balls += 1;
+                updateUI();
+            }
+        }
+
+        function badmintonPoint(player) {
+            if (player === 1) state.badminton.s1++;
+            else state.badminton.s2++;
+
+            if (state.badminton.s1 >= 21 && (state.badminton.s1 - state.badminton.s2 >= 2)) {
+                state.badminton.sets1++;
+                state.badminton.s1 = 0; state.badminton.s2 = 0;
+            } else if (state.badminton.s2 >= 21 && (state.badminton.s2 - state.badminton.s1 >= 2)) {
+                state.badminton.sets2++;
+                state.badminton.s1 = 0; state.badminton.s2 = 0;
+            }
+            updateUI();
+        }
+
+        function carromAdd(player, pts) {
+            if (player === 1) state.carrom.s1 += pts;
+            else state.carrom.s2 += pts;
+            updateUI();
+        }
+
+        function chessResult(res) {
+            state.chess.status = `Finished: ${res}`;
+            updateUI();
+        }
+
+        function resetCurrentSport() {
+            if (confirm(`Reset match data for ${currentSport.toUpperCase()}?`)) {
+                if (currentSport === 'cricket') state.cricket = { runs: 0, wickets: 0, balls: 0 };
+                if (currentSport === 'badminton') state.badminton = { s1: 0, s2: 0, sets1: 0, sets2: 0 };
+                if (currentSport === 'carrom') state.carrom = { s1: 0, s2: 0 };
+                if (currentSport === 'chess') state.chess.status = 'In Progress...';
+                updateUI();
+            }
+        }
+    </script>
+</body>
+</html>
